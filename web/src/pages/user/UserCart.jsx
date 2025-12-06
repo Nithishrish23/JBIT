@@ -44,7 +44,7 @@ export default function UserCart() {
       if (!couponCode.trim()) return;
       setCouponError("");
       setCouponSuccess("");
-      api.post('/api/cart/apply-coupon', { code: couponCode })
+      api.post('/api/user/cart/apply-coupon', { code: couponCode })
         .then(() => {
             fetchCart();
         })
@@ -55,7 +55,7 @@ export default function UserCart() {
   };
 
   const handleRemoveCoupon = () => {
-      api.post('/api/cart/remove-coupon').then(() => {
+      api.post('/api/user/cart/remove-coupon').then(() => {
           fetchCart();
           setCouponCode("");
           setCouponSuccess("");

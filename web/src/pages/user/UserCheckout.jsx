@@ -52,7 +52,7 @@ export default function UserCheckout() {
       if (!couponCode.trim()) return;
       setCouponError("");
       setCouponSuccess("");
-      api.post('/api/cart/apply-coupon', { code: couponCode })
+      api.post('/api/user/cart/apply-coupon', { code: couponCode })
         .then(() => {
             fetchCart();
         })
@@ -63,7 +63,7 @@ export default function UserCheckout() {
   };
 
   const handleRemoveCoupon = () => {
-      api.post('/api/cart/remove-coupon').then(() => {
+      api.post('/api/user/cart/remove-coupon').then(() => {
           fetchCart();
           setCouponCode("");
           setCouponSuccess("");
@@ -79,7 +79,7 @@ export default function UserCheckout() {
     }
 
     try {
-        const res = await api.post('/api/user/orders', {
+        const res = await api.post('/api/orders', {
             address_id: selectedAddressId,
             payment_method: paymentMethod
         });

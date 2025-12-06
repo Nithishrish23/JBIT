@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import UserDashboard from "./pages/user/UserDashboard";
@@ -23,6 +22,9 @@ import SellerOrders from "./pages/seller/SellerOrders";
 import SellerWithdrawals from "./pages/seller/SellerWithdrawals";
 import SellerBillingPurchase from "./pages/seller/SellerBillingPurchase";
 import SellerBillingSales from "./pages/seller/SellerBillingSales";
+import SellerCoupons from "./pages/seller/SellerCoupons";
+import SellerCategories from "./pages/seller/SellerCategories";
+import SellerEditProduct from "./pages/seller/SellerEditProduct";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -39,6 +41,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminOnboarding from "./pages/admin/AdminOnboarding";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSupport from "./pages/admin/AdminSupport";
+import AdminCoupons from "./pages/admin/AdminCoupons";
 
 import LoginPage from "./pages/user/LoginPage";
 import RegisterPage from "./pages/user/RegisterPage";
@@ -57,17 +60,14 @@ function getCurrentUserSync() {
 }
 
 const ProtectedRoute = ({ children, role }) => {
-  // Initialize synchronously from localStorage to avoid blank renders on reload
   const [user, setUser] = useState(getCurrentUserSync());
 
   useEffect(() => {
-    // Keep in sync if something else updates localStorage
     const u = getCurrentUserSync();
     setUser(u);
   }, []);
 
   if (!user) {
-      // Redirect to role-specific login if trying to access a protected route directly
       if (role === 'admin') return <Navigate to="/admin/login" />;
       if (role === 'seller') return <Navigate to="/seller/login" />;
       return <Navigate to="/login" />;
@@ -85,46 +85,36 @@ export default function App() {
         document.title = res.data.site_title;
       }
       
-      // Apply Theme Colors
       const theme = res.data;
       const root = document.documentElement;
       
-      // Map settings keys to CSS variables
-      // Brand
       if (theme.theme_brand_primary) root.style.setProperty('--theme-brand-primary', theme.theme_brand_primary);
       if (theme.theme_brand_secondary) root.style.setProperty('--theme-brand-secondary', theme.theme_brand_secondary);
       if (theme.theme_brand_accent) root.style.setProperty('--theme-brand-accent', theme.theme_brand_accent);
       if (theme.theme_brand_background) root.style.setProperty('--theme-brand-background', theme.theme_brand_background);
       
-      // Layout
       if (theme.theme_layout_background) root.style.setProperty('--theme-layout-background', theme.theme_layout_background);
       if (theme.theme_layout_card) root.style.setProperty('--theme-layout-card', theme.theme_layout_card);
       if (theme.theme_layout_sidebar) root.style.setProperty('--theme-layout-sidebar', theme.theme_layout_sidebar);
       if (theme.theme_layout_footer) root.style.setProperty('--theme-layout-footer', theme.theme_layout_footer);
       
-      // Text
       if (theme.theme_text_primary) root.style.setProperty('--theme-text-primary', theme.theme_text_primary);
       if (theme.theme_text_secondary) root.style.setProperty('--theme-text-secondary', theme.theme_text_secondary);
       if (theme.theme_text_muted) root.style.setProperty('--theme-text-muted', theme.theme_text_muted);
       if (theme.theme_text_inverse) root.style.setProperty('--theme-text-inverse', theme.theme_text_inverse);
       
-      // Button Colors
       if (theme.theme_button_bg) root.style.setProperty('--theme-button-bg', theme.theme_button_bg);
       if (theme.theme_button_text) root.style.setProperty('--theme-button-text', theme.theme_button_text);
 
-      // Header Colors
       if (theme.theme_header_bg) root.style.setProperty('--theme-header-bg', theme.theme_header_bg);
       if (theme.theme_header_text) root.style.setProperty('--theme-header-text', theme.theme_header_text);
 
-      // Footer Colors
       if (theme.theme_footer_bg) root.style.setProperty('--theme-footer-bg', theme.theme_footer_bg);
       if (theme.theme_footer_text) root.style.setProperty('--theme-footer-text', theme.theme_footer_text);
 
-      // Banner Colors
       if (theme.theme_banner_bg) root.style.setProperty('--theme-banner-bg', theme.theme_banner_bg);
       if (theme.theme_banner_text) root.style.setProperty('--theme-banner-text', theme.theme_banner_text);
       
-      // Status
       if (theme.theme_status_success) root.style.setProperty('--theme-status-success', theme.theme_status_success);
       if (theme.theme_status_warning) root.style.setProperty('--theme-status-warning', theme.theme_status_warning);
       if (theme.theme_status_error) root.style.setProperty('--theme-status-error', theme.theme_status_error);
@@ -184,6 +174,14 @@ export default function App() {
               }
             />
             <Route
+              path="/seller/products/edit/:id"
+              element={
+                <ProtectedRoute role="seller">
+                  <SellerEditProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/seller/inventory"
               element={
                 <ProtectedRoute role="seller">
@@ -196,6 +194,22 @@ export default function App() {
               element={
                 <ProtectedRoute role="seller">
                   <SellerOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/seller/categories"
+              element={
+                <ProtectedRoute role="seller">
+                  <SellerCategories />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/seller/coupons"
+              element={
+                <ProtectedRoute role="seller">
+                  <SellerCoupons />
                 </ProtectedRoute>
               }
             />
@@ -282,6 +296,14 @@ export default function App() {
               element={
                 <ProtectedRoute role="admin">
                   <AdminOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/coupons"
+              element={
+                <ProtectedRoute role="admin">
+                  <AdminCoupons />
                 </ProtectedRoute>
               }
             />

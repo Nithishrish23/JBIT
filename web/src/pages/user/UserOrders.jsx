@@ -87,7 +87,7 @@ export default function UserOrders() {
   const viewInvoice = async (orderId) => {
     try {
       setLoadingInvoice(true);
-      const res = await api.get(`/order/${orderId}/invoice`, { responseType: 'blob' });
+      const res = await api.get(`/api/orders/${orderId}/invoice`, { responseType: 'blob' });
       const blob = new Blob([res.data], { type: 'text/html' });
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
@@ -102,7 +102,7 @@ export default function UserOrders() {
   const openTrack = async (orderId) => {
     try {
       // Use the explicit track endpoint for delivery info
-      const res = await api.get(`/order/${orderId}/track`);
+      const res = await api.get(`/api/orders/${orderId}/track`);
       // The /order/:id/track endpoint returns { order_id, status, delivery_info }
       setModalOrder({
         id: res.data.order_id,

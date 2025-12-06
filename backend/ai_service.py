@@ -1,12 +1,13 @@
 from google import genai
 import json
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize the client globally or pass it. The example shows client = genai.Client() picking from env.
+# Initialize the client globally or pass it.
 _genai_client = None
 
 def configure_genai_client():
@@ -29,12 +30,6 @@ def configure_genai_client():
 def generate_product_suggestions(keyword_or_description):
     """
     Generates a product title, description, and tags based on a keyword or rough description.
-    
-    Args:
-        keyword_or_description (str): The input text from the seller.
-        
-    Returns:
-        dict: A dictionary containing 'title', 'description', and 'tags'.
     """
     client = configure_genai_client()
     if not client:
@@ -65,5 +60,3 @@ def generate_product_suggestions(keyword_or_description):
     except Exception as e:
         logger.error(f"Error generating product suggestions: {e}")
         return {"error": "Failed to generate suggestions"}
-
-

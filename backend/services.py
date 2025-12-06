@@ -1,4 +1,3 @@
-
 import smtplib
 import os
 import logging
@@ -12,7 +11,6 @@ logger = logging.getLogger(__name__)
 def send_email(to_email, subject, body_html):
     """
     Sends an email using SMTP credentials from environment variables.
-    Supports SendGrid/Mailgun via SMTP.
     """
     email_host = os.getenv("EMAIL_HOST")
     email_port = os.getenv("EMAIL_PORT")
@@ -44,7 +42,7 @@ def send_email(to_email, subject, body_html):
 
 def send_push_notification(user_id, title, message, data=None):
     """
-    Sends a push notification using a generic API endpoint (e.g., OneSignal/FCM wrapper).
+    Sends a push notification using a generic API endpoint.
     """
     api_key = os.getenv("NOTIFICATION_API_KEY")
     endpoint = os.getenv("NOTIFICATION_ENDPOINT")

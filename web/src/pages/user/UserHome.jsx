@@ -233,7 +233,7 @@ export default function UserHome() {
                             {categories.slice(0, 4).map((cat) => (
                                 <Link key={cat.id} to={`/category/${cat.slug}`} className="group relative bg-white h-[240px] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200">
                                     <div className="absolute inset-0 overflow-hidden">
-                                        <img src={cat.image ? getImageUrl(cat.image) : "https://placehold.co/400x400?text=Category"} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        <img src={getImageUrl(cat.image_url)} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => e.target.src = "https://placehold.co/400x400?text=Category"} />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
                                     </div>
                                     <div className="absolute bottom-0 left-0 p-6 w-full">
@@ -266,7 +266,7 @@ export default function UserHome() {
                             <div className="w-full lg:w-3/4">
                                 <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${gridColsClass} gap-6`}>
                                     {normalProducts.map((product) => (
-                                        <div key={product.id} className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
+                                        <Link key={product.id} to={`/product/${product.id}`} className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
                                             <div className="relative w-full h-[240px] bg-white overflow-hidden p-4">
                                                 <img
                                                     src={product.images?.[0]?.download_url ? getImageUrl(product.images[0].download_url) : "https://placehold.co/300x300?text=Product"}
@@ -281,21 +281,25 @@ export default function UserHome() {
                                             </div>
 
                                             <div className="p-4 flex flex-col flex-1 border-t border-slate-100">
-                                                <Link to={`/product/${product.id}`} className="block mb-2">
-                                                    <h4 className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-                                                        {product.name}
-                                                    </h4>
-                                                </Link>
+                                                <h4 className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors mb-2">
+                                                    {product.name}
+                                                </h4>
                                                 <div className="flex items-center justify-between mt-auto">
                                                     <div className="flex flex-col">
                                                         {product.mrp > product.price && (
-                                                            <span className="text-xs text-slate-400 line-through">₹{Number(product.mrp).toLocaleString()}</span>
+                                                            <span className="text-xs text-red-500 line-through">₹{Number(product.mrp).toLocaleString()}</span>
                                                         )}
                                                         <span className="text-lg font-bold text-slate-900">₹{Number(product.price).toLocaleString()}</span>
+                                                        {product.mrp > product.price && (
+                                                            <span className="text-[10px] text-green-600 font-bold">
+                                                                {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <button
                                                         onClick={(e) => {
-                                                            e.preventDefault();
+                                                            e.preventDefault(); // Prevent navigating to product detail
+                                                            e.stopPropagation(); // Stop propagation to the Link
                                                             handleAddToCart(product.id);
                                                         }}
                                                         disabled={product.stock_qty === 0}
@@ -305,7 +309,7 @@ export default function UserHome() {
                                                     </button>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                     ))}
                                 </div>
 

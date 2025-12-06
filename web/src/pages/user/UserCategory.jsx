@@ -114,7 +114,17 @@ export default function UserCategory() {
                             </div> 
                             <div className="p-5 text-center flex flex-col flex-1">
                                 <h4 className="font-serif text-lg text-textprimary mb-2 line-clamp-1 group-hover:text-primary transition-colors">{product.name}</h4>
-                                <div className="text-primary font-bold text-xl font-sans mt-auto">₹{Number(product.price).toLocaleString()}</div>
+                                <div className="text-primary font-bold text-xl font-sans mt-auto">
+                                    {product.mrp > product.price && (
+                                        <span className="text-sm text-red-500 line-through mr-2">₹{Number(product.mrp).toLocaleString()}</span>
+                                    )}
+                                    ₹{Number(product.price).toLocaleString()}
+                                    {product.mrp > product.price && (
+                                        <span className="text-xs text-green-600 ml-2">
+                                            ({Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF)
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </Link>
                     ))}

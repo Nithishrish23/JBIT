@@ -19,9 +19,9 @@ export default function Header({ isAdmin }) {
             try {
                 const userData = JSON.parse(u);
                 setUser(userData);
-                if (userData.role === 'admin') {
-                    api.get("/api/admin/notifications").then(res => setNotifications(res.data)).catch(() => { });
-                }
+                // Fetch notifications for all logged in users
+                api.get("/api/notifications").then(res => setNotifications(res.data)).catch(() => { });
+                
                 api.get("/api/user/cart").then((res) => {
                     setCartCount(res.data.items.reduce((acc, item) => acc + item.quantity, 0));
                 }).catch(() => { });

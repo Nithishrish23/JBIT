@@ -156,6 +156,7 @@ export default function UserSearch() {
                                         <button
                                             onClick={(e) => {
                                                 e.preventDefault();
+                                                e.stopPropagation(); // Stop propagation to the Link
                                                 // Assuming handleAddToCart exists or navigate to product detail to add
                                             }}
                                             className="bg-primary text-textinverse px-4 py-2 rounded-btn font-bold text-sm hover:bg-primary/90 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 w-full max-w-[150px]"
@@ -175,7 +176,7 @@ export default function UserSearch() {
                                 <h3 className="font-serif text-lg text-textprimary truncate mb-1">{product.name}</h3>
                                 <div className="flex items-baseline justify-center gap-2">
                                     <span className="text-lg font-bold text-primary">₹{Number(product.price).toLocaleString()}</span>
-                                    {product.mrp > 0 && (
+                                    {product.mrp > product.price && (
                                         <span className="text-sm text-red-500 line-through">₹{Number(product.mrp).toLocaleString()}</span>
                                     )}
                                 </div>

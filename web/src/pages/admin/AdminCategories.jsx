@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import api from "../../api/client";
+import { getImageUrl } from "../../utils/image";
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
-  const [formData, setFormData] = useState({ name: '', slug: '', description: '' });
+  const [formData, setFormData] = useState({ name: '', slug: '', description: '', image: null });
   const [editingId, setEditingId] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     fetchCategories();
@@ -17,15 +19,37 @@ export default function AdminCategories() {
     });
   };
 
+  const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+          setFormData({ ...formData, image: file });
+          setImagePreview(URL.createObjectURL(file));
+      }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    const fd = new FormData();
+    fd.append('name', formData.name);
+    fd.append('slug', formData.slug);
+    fd.append('description', formData.description);
+    if (formData.image) {
+        fd.append('image', formData.image);
+    }
+    if (formData.is_approved !== undefined) {
+        fd.append('is_approved', formData.is_approved);
+    }
+
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+
     if (editingId) {
-        api.put(`/api/admin/categories/${editingId}`, formData).then(() => {
+        api.put(`/api/admin/categories/${editingId}`, fd, config).then(() => {
             fetchCategories();
             resetForm();
         }).catch(err => alert("Failed to update category"));
     } else {
-        api.post("/api/admin/categories", formData).then(() => {
+        api.post("/api/admin/categories", fd, config).then(() => {
             fetchCategories();
             resetForm();
         }).catch(err => alert("Failed to create category"));
@@ -34,7 +58,8 @@ export default function AdminCategories() {
 
   const handleEdit = (cat) => {
       setEditingId(cat.id);
-      setFormData({ name: cat.name, slug: cat.slug, description: cat.description, is_approved: cat.is_approved });
+      setFormData({ name: cat.name, slug: cat.slug, description: cat.description, is_approved: cat.is_approved, image: null });
+      setImagePreview(cat.image_url ? getImageUrl(cat.image_url) : null);
   };
 
   const handleDelete = (id) => {
@@ -51,8 +76,9 @@ export default function AdminCategories() {
   };
 
   const resetForm = () => {
-      setFormData({ name: '', slug: '', description: '' });
+      setFormData({ name: '', slug: '', description: '', image: null });
       setEditingId(null);
+      setImagePreview(null);
   };
 
   return (
@@ -93,6 +119,13 @@ export default function AdminCategories() {
                         onChange={e => setFormData({...formData, description: e.target.value})} 
                      />
                 </div>
+                <div className="flex-1 min-w-[200px]">
+                    <label className="block text-xs font-medium text-slate-600 mb-1">Image</label>
+                    <div className="flex gap-2 items-center">
+                        {imagePreview && <img src={imagePreview} alt="Preview" className="w-8 h-8 object-cover rounded" />}
+                        <input type="file" accept="image/*" onChange={handleFileChange} className="text-xs" />
+                    </div>
+                </div>
                 <div className="flex gap-2">
                     {editingId && (
                         <button type="button" onClick={resetForm} className="px-4 py-2 border rounded text-sm hover:bg-slate-50">Cancel</button>
@@ -109,6 +142,7 @@ export default function AdminCategories() {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-500 border-b border-slate-200">
               <tr>
+                <th className="p-4 font-medium">Image</th>
                 <th className="p-4 font-medium">Name</th>
                 <th className="p-4 font-medium">Slug</th>
                 <th className="p-4 font-medium">Created By</th>
@@ -119,6 +153,9 @@ export default function AdminCategories() {
             <tbody className="divide-y divide-slate-100">
               {categories.map(cat => (
                 <tr key={cat.id} className="hover:bg-slate-50">
+                  <td className="p-4">
+                      <img src={getImageUrl(cat.image_url)} alt={cat.name} className="w-10 h-10 object-cover rounded bg-gray-100" onError={e => e.target.src=getImageUrl(null)} />
+                  </td>
                   <td className="p-4 font-medium">{cat.name}</td>
                   <td className="p-4 text-slate-500">{cat.slug}</td>
                   <td className="p-4 text-slate-500">{cat.seller_name}</td>
@@ -137,7 +174,7 @@ export default function AdminCategories() {
                 </tr>
               ))}
               {categories.length === 0 && (
-                  <tr><td colSpan="5" className="p-8 text-center text-slate-400">No categories found.</td></tr>
+                  <tr><td colSpan="6" className="p-8 text-center text-slate-400">No categories found.</td></tr>
               )}
             </tbody>
           </table>
