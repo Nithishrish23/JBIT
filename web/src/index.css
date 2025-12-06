@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-pagebg text-textprimary font-sans antialiased selection:bg-blue-500 selection:text-white text-body;
+  }
+  
+  h1 { @apply text-h1 font-bold text-textprimary tracking-tight; }
+  h2 { @apply text-h2 font-bold text-textprimary tracking-tight; }
+  h3 { @apply text-h3 font-semibold text-textprimary; }
+  h4 { @apply text-h4 font-semibold text-textprimary; }
+  h5 { @apply text-h5 font-medium text-textprimary; }
+  h6 { @apply text-h6 font-medium text-textprimary; }
+  
+  p { @apply text-body mb-4 text-textsecondary; }
+}
+
+/* Modern Tech Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+@layer components {
+  /* Primary Button: Modern, Blue, Clean */
+  .btn-primary {
+    @apply h-[44px] flex items-center justify-center bg-blue-600 text-white px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 font-sans font-medium text-[15px] shadow-sm hover:shadow-md active:scale-[0.98];
+  }
+
+  /* Secondary Button: Outline, Slate */
+  .btn-secondary, .btn-outline {
+    @apply h-[44px] flex items-center justify-center border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 px-6 rounded-lg transition-all duration-200 font-sans font-medium text-[15px] shadow-sm;
+  }
+
+  /* Tech Card: Clean, Bordered, No Frills */
+  .card-royal { /* Kept class name for compatibility, styled for Tech */
+    @apply bg-white rounded-xl shadow-sm hover:shadow-md border border-slate-200 transition-all duration-300 relative overflow-hidden flex flex-col;
+  }
+  
+  /* Remove the gold strip */
+  .card-royal::before {
+    display: none;
+  }
+
+  /* Input Tech: Standard Modern Input */
+  .input-royal {
+    @apply h-[44px] w-full bg-white border border-slate-300 rounded-lg px-4 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder-slate-400 text-slate-900 transition-all text-sm;
+  }
+  
+  /* Large Input */
+  .input-royal-lg {
+    @apply h-[52px] w-full bg-white border border-slate-300 rounded-lg px-4 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder-slate-400 text-slate-900 transition-all text-base;
+  }
+
+  .heading-royal {
+    @apply text-h2 font-bold text-slate-900 mb-8 text-center pb-2;
+  }
+  
+  .heading-royal::after {
+    display: none;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
