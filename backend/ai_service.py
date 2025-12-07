@@ -55,6 +55,8 @@ def generate_product_suggestions(keyword_or_description):
             text_response = text_response[7:]
         if text_response.endswith("```"):
             text_response = text_response[:-3]
+        
+        text_response = text_response.strip()
             
         return json.loads(text_response)
     except Exception as e:

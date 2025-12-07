@@ -22,23 +22,36 @@ def generate_from_image():
     try:
         pil_image = Image.open(io.BytesIO(image_data))
         prompt = "Analyze this product image. Provide a JSON response with: 'title', 'description', and 'category_hint'."
+        
+        # Using gemini-2.0-flash
         response = client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=[prompt, pil_image]
+            contents=[pil_image, prompt]
         )
+        
         text_response = response.text.strip()
-        if text_response.startswith("```json"): text_response = text_response[7:-3]
+        # Robust JSON extraction
+        if text_response.startswith("```json"): 
+            text_response = text_response[7:]
+        if text_response.endswith("```"):
+            text_response = text_response[:-3]
+        text_response = text_response.strip()
+
         return jsonify(json.loads(text_response))
     except Exception as e:
-        current_app.logger.error(f"AI Error: {e}")
-        return jsonify({"error": "Failed"}), 500
+        import traceback
+        current_app.logger.error(f"AI Error generate_from_image: {str(e)}\n{traceback.format_exc()}")
+        return jsonify({"error": f"AI generation failed: {str(e)}"}), 500
 
-@ai_bp.route('/suggest-product', methods=['POST'])
+@ai_bp.route('/generate-from-text', methods=['POST'])
 @jwt_required()
-def suggest_product():
+def generate_from_text():
     data = request.json or {}
-    text = data.get('input')
-    if not text: return jsonify({"error": "Input required"}), 400
+    text = data.get('input') or data.get('description') # Handle 'input' or 'description'
+    if not text: return jsonify({"error": "Input text required"}), 400
+    
     result = generate_product_suggestions(text)
-    if "error" in result: return jsonify(result), 500
+    
+    if "error" in result: 
+        return jsonify(result), 500
     return jsonify(result)
