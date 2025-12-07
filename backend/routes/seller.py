@@ -24,7 +24,107 @@ def seller_dashboard():
         "total_sales": total_sales
     })
 
-# ... (rest of the file) ...
+@seller_bp.route('/products', methods=['GET'])
+@role_required('seller', 'admin')
+def seller_products():
+    user_id = get_jwt_identity()
+    prods = Product.query.filter_by(seller_id=user_id).all()
+    return jsonify([p.to_dict() for p in prods])
+
+@seller_bp.route('/products', methods=['POST'])
+@role_required('seller', 'admin')
+def seller_add_product():
+    user_id = get_jwt_identity()
+    if request.content_type and request.content_type.startswith('multipart/'):
+        form = request.form
+        files = request.files.getlist('images')
+        name = form.get('name')
+        description = form.get('description', '')
+        price = form.get('price')
+        category_id = form.get('category_id')
+        stock_qty = form.get('stock_qty', 0)
+        brand = form.get('brand')
+        specifications = form.get('specifications')
+    else:
+        data = request.json or {}
+        files = []
+        name = data.get('name')
+        description = data.get('description', '')
+        price = data.get('price')
+        category_id = data.get('category_id')
+        stock_qty = data.get('stock_qty', 0)
+        brand = data.get('brand')
+        specifications = data.get('specifications')
+
+    if not all([name, price, category_id]):
+        abort(400, description="Missing fields")
+
+    try:
+        price = float(price)
+    except Exception:
+        abort(400, description='Invalid price')
+    try:
+        category_id = int(category_id)
+    except Exception:
+        abort(400, description='Invalid category_id')
+    try:
+        stock_qty = int(stock_qty or 0)
+    except Exception:
+        stock_qty = 0
+        
+    if isinstance(specifications, str):
+        import json
+        try:
+            specifications = json.loads(specifications)
+        except:
+            specifications = {}
+
+    product = Product(
+        seller_id=user_id,
+        category_id=category_id,
+        name=name,
+        description=description,
+        price=price,
+        status='pending',
+        brand=brand,
+        specifications=specifications
+    )
+
+    db.session.add(product)
+    db.session.flush()
+
+    inventory = Inventory(product_id=product.id, stock_qty=stock_qty)
+    db.session.add(inventory)
+
+    saved_file_records = []
+    try:
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        for idx, f in enumerate(files or []):
+            if not f or f.filename == '':
+                continue
+            filename = secure_filename(f.filename)
+            unique_name = f"{uuid4().hex}_{filename}"
+            save_path = os.path.join(upload_folder, unique_name)
+            f.save(save_path)
+            size = os.path.getsize(save_path)
+            frec = File(owner_id=user_id, filename=filename, stored_filename=unique_name, filepath=save_path, size=size, status='active')
+            db.session.add(frec)
+            db.session.flush()
+            saved_file_records.append(frec)
+            pi = ProductImage(product_id=product.id, file_id=frec.id, position=idx)
+            db.session.add(pi)
+
+        db.session.commit()
+        return jsonify(product=product.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        for frec in saved_file_records:
+            try:
+                if os.path.exists(frec.filepath):
+                    os.remove(frec.filepath)
+            except Exception:
+                pass
+        abort(500, description=str(e))
 
 @seller_bp.route('/products/<int:product_id>', methods=['PUT'])
 @role_required('seller', 'admin')
