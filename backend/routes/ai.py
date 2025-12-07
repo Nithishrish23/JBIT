@@ -25,16 +25,16 @@ def generate_from_image():
         prompt = "Analyze this product image. Provide a JSON response with: 'title', 'description', and 'category_hint'."
         
         try:
-            # Using gemini-2.0-flash
+            # Using gemini-2.5-flash
             response = client.models.generate_content(
-                model="gemini-2.0-flash",
+                model="gemini-2.5-flash",
                 contents=[pil_image, prompt]
             )
         except ClientError as e:
             if e.code == 429:
-                current_app.logger.warning("Gemini 2.0 Flash rate limited. Retrying with gemini-2.0-flash-lite.")
+                current_app.logger.warning("Gemini 2.5 Flash rate limited. Retrying with gemini-2.5-flash-lite.")
                 response = client.models.generate_content(
-                    model="gemini-2.0-flash-lite",
+                    model="gemini-2.5-flash-lite",
                     contents=[pil_image, prompt]
                 )
             else:
