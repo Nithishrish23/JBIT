@@ -46,3 +46,8 @@
 2025-12-07 01:41:08,702 WARNING: role_required: verify_jwt_in_request failed: Signature has expired; Authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NTA0OTgxMSwianRpIjoiNjdhMWZlMDYtNWM2MS00Nzc2LWJmYjAtMGU5ZjhmN2FiNDkyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NjUwNDk4MTEsImNzcmYiOiJhNzE4ZDMyMy01NDFiLTRiNDMtODg4ZC05NDE3ZmZmOWU4ZWEiLCJleHAiOjE3NjUwNTA3MTEsInJvbGUiOiJzZWxsZXIiLCJjbGllbnRfaWQiOm51bGx9.mpOLniAb49Cdp9JE476Bw7HYInMvsDRm5WHAUi6HKiU [in D:\codedtx\JBIT\ECOM\backend\utils.py:20]
 2025-12-07 01:41:08,705 WARNING: role_required: verify_jwt_in_request failed: Signature has expired; Authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NTA0OTgxMSwianRpIjoiNjdhMWZlMDYtNWM2MS00Nzc2LWJmYjAtMGU5ZjhmN2FiNDkyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NjUwNDk4MTEsImNzcmYiOiJhNzE4ZDMyMy01NDFiLTRiNDMtODg4ZC05NDE3ZmZmOWU4ZWEiLCJleHAiOjE3NjUwNTA3MTEsInJvbGUiOiJzZWxsZXIiLCJjbGllbnRfaWQiOm51bGx9.mpOLniAb49Cdp9JE476Bw7HYInMvsDRm5WHAUi6HKiU [in D:\codedtx\JBIT\ECOM\backend\utils.py:20]
 2025-12-07 01:41:24,216 INFO: Login attempt for: 'seller@example.com' [in D:\codedtx\JBIT\ECOM\backend\routes\auth.py:43]
+2025-12-07 12:42:04,070 INFO: Ecommerce startup [in D:\codedtx\JBIT\ECOM\backend\app.py:39]
+2025-12-07 12:42:07,691 INFO: Ecommerce startup [in D:\codedtx\JBIT\ECOM\backend\app.py:39]
+2025-12-07 12:42:32,313 INFO: Login attempt for: 'seller@example.com' [in D:\codedtx\JBIT\ECOM\backend\routes\auth.py:43]
+2025-12-07 12:52:52,310 INFO: Ecommerce startup [in D:\codedtx\JBIT\ECOM\backend\app.py:39]
+2025-12-07 13:00:49,867 INFO: Login attempt for: 'user@example.com' [in D:\codedtx\JBIT\ECOM\backend\routes\auth.py:43]

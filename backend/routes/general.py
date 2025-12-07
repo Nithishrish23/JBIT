@@ -73,7 +73,7 @@ def public_settings():
         "site_logo": get_setting('site_logo'),
         "home_banner_image": get_setting('home_banner_image'),
         "home_banner_video": get_setting('home_banner_video'),
-        "home_banner_heading": get_setting('home_banner_heading', 'From the Soil, the Sea, and the Soul'),
+        "home_banner_heading": get_setting('home_banner_heading', 'Electronics & More'),
         "home_banner_subheading": get_setting('home_banner_subheading', 'Discover a world of authentic products.'),
         
         "theme_brand_primary": get_setting('theme_brand_primary', '#9c7373'),

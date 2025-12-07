@@ -7,6 +7,7 @@ product_bp = Blueprint('product', __name__)
 
 @product_bp.route('', methods=['GET'])
 def list_products():
+    q = request.args.get('q')
     category_slug = request.args.get('category')
     brand = request.args.get('brand')
     min_price = request.args.get('min_price')
@@ -21,6 +22,11 @@ def list_products():
         User.is_approved == True,
         User.is_active == True
     )
+    
+    if q:
+        search = f"%{q}%"
+        query = query.filter(db.or_(Product.name.ilike(search), Product.description.ilike(search)))
+
     if category_slug:
         query = query.join(Category).filter(Category.slug == category_slug)
     
@@ -47,6 +53,11 @@ def list_products():
     elif sort_by == 'newest':
         query = query.order_by(Product.created_at.desc())
     else:
+        # Default sort (relevance/newest)
+        if q:
+            # If searching, maybe we don't strictly order by date, but date is fine for now.
+            # In a real search engine, we'd rank by match quality.
+            pass
         query = query.order_by(Product.created_at.desc())
 
     pagination = query.paginate(page=page, per_page=limit, error_out=False)

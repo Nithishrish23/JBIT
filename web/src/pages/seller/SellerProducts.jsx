@@ -62,7 +62,7 @@ export default function SellerProducts() {
                   <td className="p-2">₹{Number(product.price).toFixed(2)}</td>
                   <td className="p-2">{product.stock_qty || product.stock}</td>
                   <td className="p-2">{product.is_approved ? 'Approved' : 'Pending'}</td>
-                  <td className="p-2 flex gap-2">
+                  <td className="p-2 space-x-4">
                       <button onClick={() => navigate(`/seller/products/edit/${product.id}`)} className="text-blue-600 hover:underline">Edit</button>
                       <button onClick={() => handleDelete(product.id)} className="text-red-600 hover:underline">Delete</button>
                   </td>

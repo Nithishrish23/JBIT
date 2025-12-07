@@ -1,8 +1,8 @@
 import { baseURL } from "../api/client";
 
 export const getImageUrl = (url) => {
-  if (!url) return 'https://via.placeholder.com/300?text=No+Image';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
+  if (!url) return 'https://placehold.co/300?text=No+Image'; // Use placehold.co which is often more reliable
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
     return url;
   }
   // Remove leading slash to avoid double slashes if baseURL has trailing slash

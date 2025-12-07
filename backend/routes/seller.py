@@ -139,7 +139,13 @@ def seller_edit_product(product_id):
         
     product = query.first_or_404()
     
-    data = request.json or {}
+    # Check for multipart
+    if request.content_type and request.content_type.startswith('multipart/'):
+        data = request.form
+        files = request.files.getlist('images')
+    else:
+        data = request.json or {}
+        files = []
     
     if 'name' in data: product.name = data['name']
     if 'description' in data: product.description = data['description']
@@ -147,18 +153,44 @@ def seller_edit_product(product_id):
         try: product.price = float(data['price'])
         except: pass
     if 'mrp' in data:
-        try: product.mrp = float(data['mrp'])
+        try: product.mrp = float(data['mrp'] or 0)
         except: pass
             
-    if 'quantity' in data:
+    # Handle stock (accepts 'stock_qty' or 'quantity')
+    stock_val = data.get('stock_qty') or data.get('quantity')
+    if stock_val is not None:
         try:
-            qty = int(data['quantity'])
+            qty = int(stock_val)
             if product.inventory:
                 product.inventory.stock_qty = qty
             else:
                  inv = Inventory(product_id=product.id, stock_qty=qty)
                  db.session.add(inv)
         except: pass
+
+    # Handle Files (Append new images)
+    if files:
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        # Get current max position
+        current_max_pos = db.session.query(db.func.max(ProductImage.position)).filter_by(product_id=product.id).scalar()
+        if current_max_pos is None: current_max_pos = -1
+        
+        for idx, f in enumerate(files):
+            if not f or f.filename == '': continue
+            try:
+                filename = secure_filename(f.filename)
+                unique_name = f"{uuid4().hex}_{filename}"
+                save_path = os.path.join(upload_folder, unique_name)
+                f.save(save_path)
+                size = os.path.getsize(save_path)
+                frec = File(owner_id=user_id, filename=filename, stored_filename=unique_name, filepath=save_path, size=size, status='active')
+                db.session.add(frec)
+                db.session.flush()
+                
+                pi = ProductImage(product_id=product.id, file_id=frec.id, position=current_max_pos + 1 + idx)
+                db.session.add(pi)
+            except Exception as e:
+                print(f"Error saving file update: {e}")
 
     db.session.commit()
     return jsonify(product.to_dict())
