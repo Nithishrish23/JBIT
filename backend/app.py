@@ -90,4 +90,7 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5000)
+    from security_check import validate_system
+    if not validate_system():
+        exit(1)
+    socketio.run(app, debug=True, port=5000,host='0.0.0.0')
