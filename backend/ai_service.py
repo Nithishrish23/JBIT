@@ -1,4 +1,5 @@
 from google import genai
+from google.genai.errors import ClientError
 import json
 import logging
 import os
@@ -45,10 +46,21 @@ def generate_product_suggestions(keyword_or_description):
     """
     
     try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash", 
-            contents=prompt_content
-        )
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash", 
+                contents=prompt_content
+            )
+        except ClientError as e:
+            if e.code == 429:
+                logger.warning("Gemini 2.0 Flash rate limited. Retrying with gemini-1.5-flash.")
+                response = client.models.generate_content(
+                    model="gemini-1.5-flash", 
+                    contents=prompt_content
+                )
+            else:
+                raise e
+
         # Clean up potential markdown code blocks if Gemini adds them
         text_response = response.text.strip()
         if text_response.startswith("```json"):
@@ -59,6 +71,11 @@ def generate_product_suggestions(keyword_or_description):
         text_response = text_response.strip()
             
         return json.loads(text_response)
+    except ClientError as e:
+        logger.error(f"ClientError generating product suggestions: {e}")
+        if e.code == 429:
+             return {"error": "AI service busy (Rate Limit). Please try again later."}
+        return {"error": "Failed to generate suggestions"}
     except Exception as e:
         logger.error(f"Error generating product suggestions: {e}")
         return {"error": "Failed to generate suggestions"}
