@@ -53,9 +53,9 @@ def generate_product_suggestions(keyword_or_description):
             )
         except ClientError as e:
             if e.code == 429:
-                logger.warning("Gemini 2.0 Flash rate limited. Retrying with gemini-1.5-flash.")
+                logger.warning("Gemini 2.0 Flash rate limited. Retrying with gemini-2.0-flash-lite.")
                 response = client.models.generate_content(
-                    model="gemini-1.5-flash", 
+                    model="gemini-2.0-flash-lite", 
                     contents=prompt_content
                 )
             else:
